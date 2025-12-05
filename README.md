@@ -12,4 +12,7 @@ with trusted news sources in real time.
 
 🗓 Deadline: **28th December 2025**
 ### Day 1 (4th Dec): Dataset collection and initial exploration completed.
+### Day 2 (5th Dec): Data cleaning, label creation, and train/val/test split completed.
+Preprocessed dataset ready for model training.
+
 
