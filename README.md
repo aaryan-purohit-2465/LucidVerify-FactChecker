@@ -12,7 +12,14 @@ with trusted news sources in real time.
 
 🗓 Deadline: **28th December 2025**
 ### Day 1 (4th Dec): Dataset collection and initial exploration completed.
-### Day 2 (5th Dec): Data cleaning, label creation, and train/val/test split completed.
-Preprocessed dataset ready for model training.
+### Day 2 (5th Dec)
+- Cleaned Fake & True news datasets  
+- Added binary labels (0 = Fake, 1 = True)  
+- Merged datasets into a unified dataframe  
+- Removed duplicates and missing values  
+- Applied light text preprocessing  
+- Created stratified Train / Validation / Test splits  
+- Saved cleaned datasets for model training  
+
 
 
