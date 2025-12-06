@@ -20,6 +20,11 @@ with trusted news sources in real time.
 - Applied light text preprocessing  
 - Created stratified Train / Validation / Test splits  
 - Saved cleaned datasets for model training  
+### Day 3 (6th Dec)
+- Implemented TF-IDF + Logistic Regression baseline model  
+- Achieved initial accuracy/F1 score on validation dataset  
+- Saved model & vectorizer for backend integration  
+
 
 
 
