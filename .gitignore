@@ -1,0 +1,114 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+.eggs/
+*.egg
+*.pyc
+venv/
+.env
+.env.*
+
+# Virtual env
+.venv/
+venv/
+ENV/
+env/
+
+# Jupyter
+.ipynb_checkpoints
+
+# Python cache
+__pycache__/
+
+# Pytest cache
+.pytest_cache/
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# logs and temp files
+*.log
+uvicorn.log
+
+# model artifacts (don't commit large models)
+backend/app/roberta_final/
+backend/app/roberta_model/
+backend/app/roberta_logs/
+backend/app/model.safetensors
+backend/app/*.pt
+backend/app/*.bin
+backend/app/*.safetensors
+backend/app/*.pkl
+
+# Git LFS pointer files
+*.lfs
+
+# OS files
+.DS_Store
+Thumbs.db
+# Ignore large ML model files
+*.pt
+*.bin
+*.safetensors
+*.h5
+*.model
+*.ckpt
+
+# Ignore downloaded transformer models
+backend/app/roberta_final/
+backend/app/roberta_model/
+ai/models/
+models/
+
+# Ignore data files
+data/*.csv
+!data/train_clean.csv
+!data/test_clean.csv
+!data/val_clean.csv
+!data/Fake.csv
+!data/True.csv
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore venv
+.venv/
+
+# Ignore temporary files
+*.tmp
+*.log
+# Ignore virtual environment
+.venv/
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore ML model files
+*.pt
+*.bin
+*.safetensors
+*.ckpt
+*.h5
+*.model
+
+# Ignore model directories
+backend/app/roberta_final/
+backend/app/roberta_model/
+ai/models/
+models/
+
+# Ignore data except clean versions
+data/*.csv
+!data/train_clean.csv
+!data/test_clean.csv
+!data/val_clean.csv
+!data/Fake.csv
+!data/True.csv
+
+# Ignore logs
+*.log
