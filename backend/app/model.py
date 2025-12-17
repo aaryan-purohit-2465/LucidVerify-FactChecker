@@ -1,17 +1,15 @@
-# backend/app/model.py
+import joblib
+
+model = joblib.load("backend/app/baseline_model.pkl")
+vectorizer = joblib.load("backend/app/tfidf_vectorizer.pkl")
 
 def predict(text: str):
-    text = text.lower()
+    X = vectorizer.transform([text])
+    probs = model.predict_proba(X)[0]
+    idx = probs.argmax()
 
-    if any(word in text for word in ["fake", "hoax", "rumor"]):
-        return {
-            "label": "fake",
-            "confidence": 0.75,
-            "source": "rule-based"
-        }
-    else:
-        return {
-            "label": "real",
-            "confidence": 0.80,
-            "source": "rule-based"
-        }
+    return {
+        "label": str(model.classes_[idx]),
+        "confidence": float(probs[idx]),
+        "source": "baseline-ml"
+    }
