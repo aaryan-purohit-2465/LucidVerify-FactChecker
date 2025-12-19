@@ -8,6 +8,16 @@ from typing import Any, Callable, Dict
 log = logging.getLogger("backend.app.main")
 
 app = FastAPI(title="LucidVerify Fact Checker API")
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # React dev server
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # CORS: allow local dev origins (adjust for production)
 origins = [
@@ -92,3 +102,4 @@ async def predict_route(payload: Dict[str, Any]):
     except Exception as e:
         log.exception("Predict function raised an exception")
         return {"label": "unknown", "confidence": 0.0, "source": "error", "error": str(e)}
+    from pydantic import BaseModel
