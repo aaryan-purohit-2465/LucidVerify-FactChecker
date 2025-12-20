@@ -1,50 +1,25 @@
 # backend/app/model.py
-
-import joblib
-import os
-
-MODEL_PATH = "backend/app/baseline_model.pkl"
-VECTORIZER_PATH = "backend/app/tfidf_vectorizer.pkl"
-
-model = None
-vectorizer = None
-
-
-def load_model():
-    """
-    Loads ML model and vectorizer into memory.
-    Called once on app startup.
-    """
-    global model, vectorizer
-
-    if not os.path.exists(MODEL_PATH) or not os.path.exists(VECTORIZER_PATH):
-        print("⚠️ Model files not found, running in fallback mode")
-        model = None
-        vectorizer = None
-        return
-
-    model = joblib.load(MODEL_PATH)
-    vectorizer = joblib.load(VECTORIZER_PATH)
-    print("✅ ML model loaded successfully")
-
+# Simple, stable ML stub (no load_model, no crashes)
 
 def predict(text: str):
-    """
-    Predicts label for given text.
-    """
-    if model is None or vectorizer is None:
+    if not text or not isinstance(text, str):
         return {
             "label": "unknown",
             "confidence": 0.0,
-            "source": "fallback"
+            "source": "invalid-input"
         }
 
-    X = vectorizer.transform([text])
-    probs = model.predict_proba(X)[0]
-    idx = probs.argmax()
+    text = text.lower()
+
+    if any(word in text for word in ["fake", "hoax", "rumour", "rumor"]):
+        return {
+            "label": "fake",
+            "confidence": 0.78,
+            "source": "rule-based"
+        }
 
     return {
-        "label": str(model.classes_[idx]),
-        "confidence": float(probs[idx]),
-        "source": "baseline-ml"
+        "label": "real",
+        "confidence": 0.82,
+        "source": "rule-based"
     }

@@ -2,13 +2,10 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-
 from backend.app.model import predict
 
-app = FastAPI(title="LucidVerify – Fact Checker API")
+app = FastAPI(title="LucidVerify API")
 
-# CORS (allow frontend later)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -16,16 +13,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Request schema
-class PredictRequest(BaseModel):
-    text: str
-
-
 @app.get("/")
 def root():
-    return {"message": "LucidVerify API is running"}
-
+    return {"status": "LucidVerify backend running"}
 
 @app.post("/predict")
-def predict_route(request: PredictRequest):
-    return predict(request.text)
+def predict_route(payload: dict):
+    text = payload.get("text", "")
+    return predict(text)
