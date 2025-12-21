@@ -1,42 +1,55 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import "./App.css";
 
 function App() {
   const [text, setText] = useState("");
   const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const checkNews = async () => {
-    const res = await fetch("http://127.0.0.1:8000/predict", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text }),
-    });
+    if (!text.trim()) return;
 
-    const data = await res.json();
-    setResult(data);
+    setLoading(true);
+    setResult(null);
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/predict", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ text })
+      });
+
+      const data = await response.json();
+      setResult(data);
+    } catch (error) {
+      alert("Backend not reachable");
+    }
+
+    setLoading(false);
   };
 
   return (
-    <div style={{ padding: "40px", fontFamily: "sans-serif" }}>
+    <div className="container">
       <h1>LucidVerify</h1>
+      <p>Fake News & Fact Checker</p>
 
       <textarea
-        rows="5"
-        style={{ width: "100%" }}
         placeholder="Paste news text here..."
         value={text}
         onChange={(e) => setText(e.target.value)}
       />
 
-      <br /><br />
-
-      <button onClick={checkNews}>Check</button>
+      <button onClick={checkNews} disabled={loading}>
+        {loading ? "Checking..." : "Check"}
+      </button>
 
       {result && (
-        <div style={{ marginTop: "20px" }}>
-          <h3>Result</h3>
-          <p><b>Label:</b> {result.label}</p>
-          <p><b>Confidence:</b> {result.confidence}</p>
-          <p><b>Source:</b> {result.source}</p>
+        <div className="result">
+          <p><strong>Label:</strong> {result.label}</p>
+          <p><strong>Confidence:</strong> {result.confidence}</p>
+          <p><strong>Source:</strong> {result.source}</p>
         </div>
       )}
     </div>
