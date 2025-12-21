@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import "./App.css";
+import { useState } from "react";
 
 function App() {
   const [text, setText] = useState("");
@@ -10,46 +9,49 @@ function App() {
     if (!text.trim()) return;
 
     setLoading(true);
-    setResult(null);
-
     try {
-      const response = await fetch("http://127.0.0.1:8000/predict", {
+      const res = await fetch("http://127.0.0.1:8000/predict", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text })
+        body: JSON.stringify({ text }),
       });
 
-      const data = await response.json();
+      const data = await res.json();
       setResult(data);
-    } catch (error) {
+    } catch (err) {
+      console.error(err);
       alert("Backend not reachable");
     }
-
     setLoading(false);
   };
 
   return (
-    <div className="container">
+    <div style={{ padding: "2rem", maxWidth: "600px", margin: "auto" }}>
       <h1>LucidVerify</h1>
-      <p>Fake News & Fact Checker</p>
+      <p>Fake News Fact Checker</p>
 
       <textarea
+        rows="6"
+        style={{ width: "100%", padding: "10px" }}
         placeholder="Paste news text here..."
         value={text}
         onChange={(e) => setText(e.target.value)}
       />
+
+      <br /><br />
 
       <button onClick={checkNews} disabled={loading}>
         {loading ? "Checking..." : "Check"}
       </button>
 
       {result && (
-        <div className="result">
-          <p><strong>Label:</strong> {result.label}</p>
-          <p><strong>Confidence:</strong> {result.confidence}</p>
-          <p><strong>Source:</strong> {result.source}</p>
+        <div style={{ marginTop: "1.5rem" }}>
+          <h3>Result</h3>
+          <p><b>Label:</b> {result.label}</p>
+          <p><b>Confidence:</b> {result.confidence}</p>
+          <p><b>Source:</b> {result.source}</p>
         </div>
       )}
     </div>
