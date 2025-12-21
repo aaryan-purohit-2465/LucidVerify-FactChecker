@@ -1,10 +1,11 @@
 # backend/app/main.py
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from backend.app.model import predict
+from pydantic import BaseModel
 
-app = FastAPI(title="LucidVerify API")
+from backend.app.model import load_model, predict
+
+app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
@@ -13,11 +14,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
-def root():
-    return {"status": "LucidVerify backend running"}
+class TextInput(BaseModel):
+    text: str
+
+
+@app.on_event("startup")
+def startup_event():
+    load_model()
+
 
 @app.post("/predict")
-def predict_route(payload: dict):
-    text = payload.get("text", "")
-    return predict(text)
+def predict_api(data: TextInput):
+    return predict(data.text)
