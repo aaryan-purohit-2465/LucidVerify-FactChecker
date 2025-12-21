@@ -4,7 +4,7 @@ LucidVerify is an AI-driven platform designed to detect fake news using
 a fine-tuned transformer model and validate facts by cross-verifying 
 with trusted news sources in real time.
 
-🚀 **Tech Stack (Planned)**
+🚀 **Tech Stack**
 - Backend: FastAPI + Python
 - Model: RoBERTa / DistilRoBERTa (HuggingFace Transformers)
 - Frontend: React + Tailwind
