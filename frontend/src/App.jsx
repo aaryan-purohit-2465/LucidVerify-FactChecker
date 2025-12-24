@@ -1,16 +1,24 @@
 import { useState } from "react";
+import "./App.css";
 
 function App() {
   const [text, setText] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const checkNews = async () => {
-    if (!text.trim()) return;
+  const checkFact = async () => {
+    if (!text.trim()) {
+      setError("Please enter some text");
+      return;
+    }
 
     setLoading(true);
+    setError("");
+    setResult(null);
+
     try {
-      const res = await fetch("http://127.0.0.1:8000/predict", {
+      const response = await fetch("http://127.0.0.1:8000/predict", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -18,40 +26,37 @@ function App() {
         body: JSON.stringify({ text }),
       });
 
-      const data = await res.json();
+      const data = await response.json();
       setResult(data);
     } catch (err) {
-      console.error(err);
-      alert("Backend not reachable");
+      setError("Failed to connect to backend");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
-    <div style={{ padding: "2rem", maxWidth: "600px", margin: "auto" }}>
+    <div className="container">
       <h1>LucidVerify</h1>
-      <p>Fake News Fact Checker</p>
+      <p className="subtitle">Fact Checker</p>
 
       <textarea
-        rows="6"
-        style={{ width: "100%", padding: "10px" }}
-        placeholder="Paste news text here..."
+        placeholder="Enter a news statement..."
         value={text}
         onChange={(e) => setText(e.target.value)}
       />
 
-      <br /><br />
-
-      <button onClick={checkNews} disabled={loading}>
+      <button onClick={checkFact} disabled={loading}>
         {loading ? "Checking..." : "Check"}
       </button>
 
+      {error && <p className="error">{error}</p>}
+
       {result && (
-        <div style={{ marginTop: "1.5rem" }}>
-          <h3>Result</h3>
-          <p><b>Label:</b> {result.label}</p>
-          <p><b>Confidence:</b> {result.confidence}</p>
-          <p><b>Source:</b> {result.source}</p>
+        <div className="result">
+          <p><strong>Label:</strong> {result.label}</p>
+          <p><strong>Confidence:</strong> {result.confidence}</p>
+          <p><strong>Source:</strong> {result.source}</p>
         </div>
       )}
     </div>
