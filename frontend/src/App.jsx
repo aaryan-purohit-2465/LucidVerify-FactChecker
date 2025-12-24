@@ -5,16 +5,11 @@ function App() {
   const [text, setText] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
-  const checkFact = async () => {
-    if (!text.trim()) {
-      setError("Please enter some text");
-      return;
-    }
+  const checkNews = async () => {
+    if (!text.trim()) return;
 
     setLoading(true);
-    setError("");
     setResult(null);
 
     try {
@@ -28,35 +23,41 @@ function App() {
 
       const data = await response.json();
       setResult(data);
-    } catch (err) {
-      setError("Failed to connect to backend");
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      setResult({ label: "error", confidence: 0 });
     }
+
+    setLoading(false);
   };
 
   return (
     <div className="container">
       <h1>LucidVerify</h1>
-      <p className="subtitle">Fact Checker</p>
+      <p>AI-powered Fact Checker</p>
 
       <textarea
-        placeholder="Enter a news statement..."
+        placeholder="Paste news text here..."
         value={text}
         onChange={(e) => setText(e.target.value)}
       />
 
-      <button onClick={checkFact} disabled={loading}>
+      <button onClick={checkNews} disabled={loading}>
         {loading ? "Checking..." : "Check"}
       </button>
 
-      {error && <p className="error">{error}</p>}
-
       {result && (
         <div className="result">
-          <p><strong>Label:</strong> {result.label}</p>
-          <p><strong>Confidence:</strong> {result.confidence}</p>
-          <p><strong>Source:</strong> {result.source}</p>
+          <h3>Result</h3>
+          <p>
+            <strong>Label:</strong> {result.label}
+          </p>
+          <p>
+            <strong>Confidence:</strong>{" "}
+            {(result.confidence * 100).toFixed(2)}%
+          </p>
+          <p>
+            <strong>Source:</strong> {result.source}
+          </p>
         </div>
       )}
     </div>
