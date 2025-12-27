@@ -1,19 +1,20 @@
 import { useState } from "react";
-import "./App.css";
+import ResultCard from "./components/ResultCard";
+import "./index.css";
 
 function App() {
   const [text, setText] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const checkNews = async () => {
+  const handleCheck = async () => {
     if (!text.trim()) return;
 
     setLoading(true);
     setResult(null);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/predict", {
+      const res = await fetch("http://127.0.0.1:8000/predict", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -21,45 +22,40 @@ function App() {
         body: JSON.stringify({ text }),
       });
 
-      const data = await response.json();
+      const data = await res.json();
       setResult(data);
-    } catch (error) {
-      setResult({ label: "error", confidence: 0 });
+    } catch (err) {
+      setResult({
+        label: "error",
+        confidence: 0,
+        source: "error",
+      });
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
-    <div className="container">
-      <h1>LucidVerify</h1>
-      <p>AI-powered Fact Checker</p>
+    <div className="app-container">
+      <div className="card">
+        <h1 className="title">LucidVerify</h1>
+        <p className="subtitle">
+          Fact-checking news using intelligent analysis
+        </p>
 
-      <textarea
-        placeholder="Paste news text here..."
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-      />
+        <textarea
+          className="input-box"
+          placeholder="Paste news or statement here..."
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
 
-      <button onClick={checkNews} disabled={loading}>
-        {loading ? "Checking..." : "Check"}
-      </button>
+        <button className="check-btn" onClick={handleCheck} disabled={loading}>
+          {loading ? "Checking..." : "Verify"}
+        </button>
 
-      {result && (
-        <div className="result">
-          <h3>Result</h3>
-          <p>
-            <strong>Label:</strong> {result.label}
-          </p>
-          <p>
-            <strong>Confidence:</strong>{" "}
-            {(result.confidence * 100).toFixed(2)}%
-          </p>
-          <p>
-            <strong>Source:</strong> {result.source}
-          </p>
-        </div>
-      )}
+        {result && <ResultCard result={result} />}
+      </div>
     </div>
   );
 }
