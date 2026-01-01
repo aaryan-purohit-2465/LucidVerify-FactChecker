@@ -113,6 +113,5 @@ Cloud deployment
 
 Aaryan Purohit
 Computer Science Student
-SRM Institute of Science and Technology
 
 ⭐ If you find this project interesting, feel free to star the repository!
