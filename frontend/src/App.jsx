@@ -1,61 +1,41 @@
 import { useState } from "react";
-import ResultCard from "./components/ResultCard";
-import "./index.css";
 
 function App() {
   const [text, setText] = useState("");
   const [result, setResult] = useState(null);
-  const [loading, setLoading] = useState(false);
 
-  const handleCheck = async () => {
-    if (!text.trim()) return;
-
-    setLoading(true);
-    setResult(null);
-
-    try {
-      const res = await fetch("http://127.0.0.1:8000/predict", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ text }),
-      });
-
-      const data = await res.json();
-      setResult(data);
-    } catch (err) {
-      setResult({
-        label: "error",
-        confidence: 0,
-        source: "error",
-      });
-    } finally {
-      setLoading(false);
-    }
+  const checkFact = async () => {
+    const res = await fetch("http://127.0.0.1:8000/predict", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+    const data = await res.json();
+    setResult(data);
   };
 
   return (
-    <div className="app-container">
-      <div className="card">
-        <h1 className="title">LucidVerify</h1>
-        <p className="subtitle">
-          Fact-checking news using intelligent analysis
-        </p>
+    <div style={{ padding: "40px", fontFamily: "Arial" }}>
+      <h1>LucidVerify – Fact Checker</h1>
 
-        <textarea
-          className="input-box"
-          placeholder="Paste news or statement here..."
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        />
+      <textarea
+        rows="5"
+        style={{ width: "100%", marginBottom: "10px" }}
+        placeholder="Enter a news statement..."
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
 
-        <button className="check-btn" onClick={handleCheck} disabled={loading}>
-          {loading ? "Checking..." : "Verify"}
-        </button>
+      <br />
+      <button onClick={checkFact}>Check</button>
 
-        {result && <ResultCard result={result} />}
-      </div>
+      {result && (
+        <div style={{ marginTop: "20px" }}>
+          <p><b>Label:</b> {result.label}</p>
+          <p><b>Confidence:</b> {result.confidence}</p>
+          <p><b>Source:</b> {result.source}</p>
+        </div>
+      )}
     </div>
   );
 }
