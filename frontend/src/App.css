@@ -1,63 +1,67 @@
-.app {
+body {
+  font-family: system-ui, sans-serif;
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+.container {
   max-width: 700px;
   margin: 60px auto;
   padding: 30px;
-  font-family: Arial, sans-serif;
-  text-align: center;
+  background: #020617;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
 }
 
 h1 {
-  font-size: 36px;
-  margin-bottom: 5px;
+  text-align: center;
+  margin-bottom: 4px;
 }
 
 .subtitle {
-  color: #666;
-  margin-bottom: 30px;
+  text-align: center;
+  color: #94a3b8;
+  margin-bottom: 24px;
 }
 
 textarea {
   width: 100%;
-  height: 160px;
-  padding: 15px;
+  min-height: 140px;
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  resize: vertical;
   font-size: 16px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  resize: none;
 }
 
 button {
-  margin-top: 20px;
-  padding: 12px 30px;
-  font-size: 16px;
+  margin-top: 16px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
   border: none;
-  border-radius: 6px;
-  background-color: #2e7d32;
-  color: white;
+  background: #22c55e;
+  font-size: 16px;
+  font-weight: bold;
   cursor: pointer;
 }
 
 button:disabled {
-  background-color: #9ccc9c;
+  background: #64748b;
+  cursor: not-allowed;
 }
 
 .result {
-  margin-top: 30px;
-  padding: 20px;
-  border-radius: 8px;
+  margin-top: 24px;
+  padding: 16px;
+  border-radius: 12px;
+  text-align: center;
 }
 
 .result.real {
-  background-color: #e8f5e9;
-  color: #2e7d32;
+  background: #14532d;
 }
 
 .result.fake {
-  background-color: #ffebee;
-  color: #c62828;
-}
-
-.source {
-  font-size: 14px;
-  color: #555;
+  background: #7f1d1d;
 }
