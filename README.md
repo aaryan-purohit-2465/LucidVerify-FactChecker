@@ -17,12 +17,14 @@ LucidVerify is a full-stack web application that checks whether a given news sta
 ### Backend
 ```bash
 py -3 -m uvicorn backend.app.main:app --reload
-Frontend
+
+###Frontend
+```bash
 cd frontend
 npm install
 npm run dev
 
-Status
+##Status
 🚧 Improving features and model accuracy
 
 Built by Aaryan
