@@ -1,6 +1,6 @@
 import pickle
+import numpy as np
 
-# Load model and vectorizer once
 with open("backend/app/ml_model.pkl", "rb") as f:
     model = pickle.load(f)
 
@@ -10,11 +10,22 @@ with open("backend/app/vectorizer.pkl", "rb") as f:
 
 def predict(text: str):
     vec = vectorizer.transform([text])
-    prediction = model.predict(vec)[0]
-    confidence = max(model.predict_proba(vec)[0])
+    probs = model.predict_proba(vec)[0]
+    prediction = model.classes_[probs.argmax()]
+    confidence = float(probs.max())
+
+    # Explainability
+    feature_names = vectorizer.get_feature_names_out()
+    coef = model.coef_[0]
+
+    word_scores = vec.toarray()[0] * coef
+    top_indices = np.argsort(word_scores)[-3:]
+
+    keywords = [feature_names[i] for i in top_indices if word_scores[i] > 0]
 
     return {
         "label": prediction,
-        "confidence": round(float(confidence), 2),
-        "source": "ml-model"
+        "confidence": round(confidence, 2),
+        "source": "ml-model",
+        "keywords": keywords
     }
