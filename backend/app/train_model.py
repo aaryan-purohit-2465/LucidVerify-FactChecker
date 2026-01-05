@@ -1,35 +1,38 @@
 import pandas as pd
-import joblib
+import pickle
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
 
-# Load data
-df_true = pd.read_csv("data/True.csv")
-df_fake = pd.read_csv("data/Fake.csv")
+# Load dataset
+df = pd.read_csv("backend/app/data/news.csv")
 
-df_true["label"] = 1
-df_fake["label"] = 0
-
-df = pd.concat([df_true, df_fake], ignore_index=True)
-df = df.sample(frac=1).reset_index(drop=True)
-
+# Expecting columns: text, label
 X = df["text"]
 y = df["label"]
 
-# Vectorizer
-vectorizer = TfidfVectorizer(
-    max_features=10000,
-    stop_words="english"
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
 )
 
-X_vec = vectorizer.fit_transform(X)
+# Vectorizer
+vectorizer = TfidfVectorizer(
+    stop_words="english",
+    max_df=0.7
+)
+
+X_train_vec = vectorizer.fit_transform(X_train)
 
 # Model
-model = LogisticRegression(max_iter=2000)
-model.fit(X_vec, y)
+model = LogisticRegression()
+model.fit(X_train_vec, y_train)
 
-# Save
-joblib.dump(model, "backend/app/model.joblib")
-joblib.dump(vectorizer, "backend/app/vectorizer.joblib")
+# Save model + vectorizer
+with open("backend/app/ml_model.pkl", "wb") as f:
+    pickle.dump(model, f)
 
-print("✅ Model and vectorizer saved")
+with open("backend/app/vectorizer.pkl", "wb") as f:
+    pickle.dump(vectorizer, f)
+
+print("Model and vectorizer saved successfully.")
