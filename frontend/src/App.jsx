@@ -6,7 +6,7 @@ function App() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const checkFact = async () => {
+  const verifyNews = async () => {
     if (!text.trim()) return;
 
     setLoading(true);
@@ -15,43 +15,42 @@ function App() {
     try {
       const res = await fetch("http://127.0.0.1:8000/predict", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text }),
       });
-
       const data = await res.json();
       setResult(data);
-    } catch (err) {
-      alert("Backend not reachable");
-    } finally {
-      setLoading(false);
+    } catch {
+      setResult({ label: "error", confidence: 0, source: "backend error" });
     }
+
+    setLoading(false);
   };
 
   return (
-    <div className="container">
-      <h1>LucidVerify</h1>
-      <p className="subtitle">Fact Checker</p>
+    <div className="page">
+      <div className="card">
+        <h1>LucidVerify</h1>
+        <p className="tagline">Verify news. Instantly.</p>
 
-      <textarea
-        placeholder="Paste a news statement here..."
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-      />
+        <textarea
+          placeholder="Paste a news headline or paragraph here…"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
 
-      <button onClick={checkFact} disabled={loading}>
-        {loading ? "Checking..." : "Check"}
-      </button>
+        <button onClick={verifyNews} disabled={loading}>
+          {loading ? "Verifying…" : "Verify News"}
+        </button>
 
-      {result && (
-        <div className={`result ${result.label}`}>
-          <h3>Result: {result.label.toUpperCase()}</h3>
-          <p>Confidence: {(result.confidence * 100).toFixed(1)}%</p>
-          <p>Source: {result.source}</p>
-        </div>
-      )}
+        {result && (
+          <div className={`result ${result.label}`}>
+            <h3>{result.label.toUpperCase()}</h3>
+            <p>{(result.confidence * 100).toFixed(0)}% confidence</p>
+            <span>{result.source}</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
