@@ -9,7 +9,7 @@ LucidVerify is a full-stack web application that checks whether a given news sta
 ## Features
 - Paste news text and verify authenticity
 - Confidence score for predictions
-- Clean, responsive UI
+- Clean and responsive UI
 - REST API backend
 
 ## Run Locally
