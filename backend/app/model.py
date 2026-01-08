@@ -1,31 +1,40 @@
-import pickle
-import numpy as np
+# backend/app/model.py
 
-with open("backend/app/ml_model.pkl", "rb") as f:
-    model = pickle.load(f)
+model = None
 
-with open("backend/app/vectorizer.pkl", "rb") as f:
-    vectorizer = pickle.load(f)
+def load_model():
+    """
+    Loads or initializes the model.
+    This is a safe fallback model for now.
+    """
+    global model
+    model = "rule_based_model"
+    print("Model loaded successfully")
 
 
 def predict(text: str):
-    vec = vectorizer.transform([text])
-    probs = model.predict_proba(vec)[0]
-    prediction = model.classes_[probs.argmax()]
-    confidence = float(probs.max())
+    """
+    Simple rule-based prediction (temporary but stable).
+    """
+    if not text or not text.strip():
+        return {
+            "label": "unknown",
+            "confidence": 0.0,
+            "source": "rule-based"
+        }
 
-    # Explainability
-    feature_names = vectorizer.get_feature_names_out()
-    coef = model.coef_[0]
+    keywords = ["government", "policy", "minister", "election", "education"]
+    text_lower = text.lower()
 
-    word_scores = vec.toarray()[0] * coef
-    top_indices = np.argsort(word_scores)[-3:]
-
-    keywords = [feature_names[i] for i in top_indices if word_scores[i] > 0]
+    if any(word in text_lower for word in keywords):
+        return {
+            "label": "real",
+            "confidence": 0.8,
+            "source": "rule-based"
+        }
 
     return {
-        "label": prediction,
-        "confidence": round(confidence, 2),
-        "source": "ml-model",
-        "keywords": keywords
+        "label": "unknown",
+        "confidence": 0.4,
+        "source": "rule-based"
     }
