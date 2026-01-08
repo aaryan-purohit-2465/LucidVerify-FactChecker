@@ -1,20 +1,22 @@
-# backend/app/main.py
-
 from fastapi import FastAPI
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 from .model import load_model, predict
 
-app = FastAPI(title="LucidVerify Fact Checker API")
+app = FastAPI(title="LucidVerify API")
+
+# CORS configuration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # allow all for now (safe for demo)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class PredictRequest(BaseModel):
     text: str
-
-
-class PredictResponse(BaseModel):
-    label: str
-    confidence: float
-    source: str
 
 
 @app.on_event("startup")
@@ -24,9 +26,14 @@ def startup_event():
 
 @app.get("/")
 def root():
-    return {"message": "LucidVerify Fact Checker API is running"}
+    return {"status": "ok"}
 
 
-@app.post("/predict", response_model=PredictResponse)
+@app.get("/health")
+def health():
+    return {"status": "healthy"}
+
+
+@app.post("/predict")
 def predict_claim(request: PredictRequest):
     return predict(request.text)
