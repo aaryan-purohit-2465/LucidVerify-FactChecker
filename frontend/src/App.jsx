@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./App.css";
+import { verifyNews as verifyNewsAPI } from "./services/api";
 
 function App() {
   const [text, setText] = useState("");
@@ -9,74 +10,48 @@ function App() {
 
   const verifyNews = async () => {
     if (!text.trim()) {
-      setError("Please enter some text to verify.");
+      setError("Please enter some news text.");
       return;
     }
 
-    setError("");
     setLoading(true);
+    setError("");
     setResult(null);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/predict", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ text }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Server error");
-      }
-
-      const data = await response.json();
+      const data = await verifyNewsAPI(text);
       setResult(data);
     } catch (err) {
-      setError("Could not connect to backend. Make sure the server is running.");
+      setError("Backend not reachable.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="page">
-      <div className="card">
-        <h1>LucidVerify</h1>
-        <p className="tagline">Verify news. Instantly.</p>
+    <div className="app">
+      <h1>LucidVerify — Fact Checker</h1>
 
-        <textarea
-          placeholder="Paste a news headline or paragraph here..."
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        />
+      <textarea
+        placeholder="Paste news text here..."
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
 
-        <button onClick={verifyNews} disabled={loading}>
-          {loading ? "Verifying..." : "Verify News"}
-        </button>
+      <button onClick={verifyNews} disabled={loading}>
+        {loading ? "Checking..." : "Verify"}
+      </button>
 
-        {error && <p style={{ color: "#f87171", marginTop: "16px" }}>{error}</p>}
+      {error && <p className="error">{error}</p>}
 
-        {result && (
-          <div className={`result ${result.label}`}>
-            <h3>{result.label.toUpperCase()}</h3>
-            <p>
-              <strong>Confidence:</strong>{" "}
-              {(result.confidence * 100).toFixed(0)}%
-            </p>
-            <p>
-              <strong>Source:</strong> {result.source}
-            </p>
-
-            {result.keywords && result.keywords.length > 0 && (
-              <p>
-                <strong>Key indicators:</strong>{" "}
-                {result.keywords.join(", ")}
-              </p>
-            )}
-          </div>
-        )}
-      </div>
+      {result && (
+        <div className="result">
+          <h3>Result</h3>
+          <p><b>Label:</b> {result.label}</p>
+          <p><b>Confidence:</b> {result.confidence}</p>
+          <p><b>Source:</b> {result.source}</p>
+        </div>
+      )}
     </div>
   );
 }

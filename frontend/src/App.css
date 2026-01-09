@@ -1,96 +1,53 @@
-* {
-  box-sizing: border-box;
-  font-family: "Inter", system-ui, sans-serif;
-}
-
 body {
   margin: 0;
-  background: linear-gradient(135deg, #020617, #020617);
-  color: #e5e7eb;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #0f172a;
+  color: white;
 }
 
-.page {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.card {
-  width: 100%;
-  max-width: 640px;
+.app {
+  max-width: 700px;
+  margin: 50px auto;
+  padding: 20px;
   background: #020617;
-  border-radius: 20px;
-  padding: 36px;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
-}
-
-h1 {
-  text-align: center;
-  margin-bottom: 6px;
-  font-size: 2.6rem;
-}
-
-.tagline {
-  text-align: center;
-  color: #94a3b8;
-  margin-bottom: 28px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
 }
 
 textarea {
   width: 100%;
-  min-height: 150px;
-  padding: 16px;
-  border-radius: 12px;
+  height: 150px;
+  padding: 12px;
+  border-radius: 8px;
   border: none;
-  outline: none;
-  font-size: 1rem;
-  resize: vertical;
-  margin-bottom: 20px;
+  resize: none;
+  margin-top: 10px;
+  font-size: 16px;
 }
 
 button {
-  width: 100%;
-  padding: 16px;
-  border-radius: 12px;
+  margin-top: 15px;
+  padding: 12px 20px;
+  background: #2563eb;
+  color: white;
   border: none;
-  background: #22c55e;
-  color: #022c22;
-  font-size: 1.05rem;
-  font-weight: 600;
+  border-radius: 8px;
   cursor: pointer;
 }
 
 button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  background: #555;
 }
 
 .result {
-  margin-top: 28px;
-  padding: 22px;
-  border-radius: 14px;
-  text-align: center;
+  margin-top: 20px;
+  padding: 15px;
+  background: #020617;
+  border: 1px solid #2563eb;
+  border-radius: 10px;
 }
 
-.result.real {
-  background: #14532d;
-}
-
-.result.fake {
-  background: #7f1d1d;
-}
-
-.result.error {
-  background: #334155;
-}
-
-.result h3 {
-  margin-bottom: 6px;
-  font-size: 1.4rem;
-}
-
-.result span {
-  font-size: 0.9rem;
-  color: #cbd5f5;
+.error {
+  color: #ef4444;
+  margin-top: 10px;
 }
