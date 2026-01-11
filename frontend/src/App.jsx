@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./App.css";
-import { verifyNews as verifyNewsAPI } from "./services/api";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 function App() {
   const [text, setText] = useState("");
@@ -9,49 +10,60 @@ function App() {
   const [error, setError] = useState("");
 
   const verifyNews = async () => {
-    if (!text.trim()) {
-      setError("Please enter some news text.");
-      return;
-    }
+    if (!text.trim()) return;
 
     setLoading(true);
     setError("");
     setResult(null);
 
     try {
-      const data = await verifyNewsAPI(text);
+      const response = await fetch(`${API_URL}/predict`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ text })
+      });
+
+      if (!response.ok) {
+        throw new Error("Backend not reachable");
+      }
+
+      const data = await response.json();
       setResult(data);
     } catch (err) {
-      setError("Backend not reachable.");
+      setError("Backend not reachable. Please try again later.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="app">
-      <h1>LucidVerify — Fact Checker</h1>
+    <div className="app-container">
+      <div className="card">
+        <h1>LucidVerify — Fact Checker</h1>
+        <p className="subtitle">AI-powered Fake News Detection</p>
 
-      <textarea
-        placeholder="Paste news text here..."
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-      />
+        <textarea
+          placeholder="Enter a news claim or statement..."
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
 
-      <button onClick={verifyNews} disabled={loading}>
-        {loading ? "Checking..." : "Verify"}
-      </button>
+        <button onClick={verifyNews} disabled={loading}>
+          {loading ? "Verifying..." : "Verify"}
+        </button>
 
-      {error && <p className="error">{error}</p>}
+        {error && <p className="error">{error}</p>}
 
-      {result && (
-        <div className="result">
-          <h3>Result</h3>
-          <p><b>Label:</b> {result.label}</p>
-          <p><b>Confidence:</b> {result.confidence}</p>
-          <p><b>Source:</b> {result.source}</p>
-        </div>
-      )}
+        {result && (
+          <div className="result">
+            <p><strong>Label:</strong> {result.label}</p>
+            <p><strong>Confidence:</strong> {result.confidence}</p>
+            <p><strong>Source:</strong> {result.source}</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
