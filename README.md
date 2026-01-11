@@ -25,4 +25,4 @@ npm run dev
 ## Status
 🚧 Improving features and model accuracy
 
-#### Built by Aaryan
+## Built by Aaryan
