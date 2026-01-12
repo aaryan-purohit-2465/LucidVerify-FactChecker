@@ -45,7 +45,7 @@ function App() {
         <p className="subtitle">AI-powered Fake News Detection</p>
 
         <textarea
-          placeholder="Enter a news claim or statement..."
+          placeholder="Paste a news headline, tweet, or claim to verify..."
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
@@ -57,12 +57,31 @@ function App() {
         {error && <p className="error">{error}</p>}
 
         {result && (
-          <div className="result">
-            <p><strong>Label:</strong> {result.label}</p>
-            <p><strong>Confidence:</strong> {result.confidence}</p>
-            <p><strong>Source:</strong> {result.source}</p>
+          <div className={`result ${result.label}`}>
+            <h3>Prediction Result</h3>
+
+            <p className="label">
+              {result.label === "real" ? "✅ REAL NEWS" : "❌ FAKE NEWS"}
+            </p>
+
+            <div className="confidence-bar">
+              <div
+                className="confidence-fill"
+                style={{ width: `${result.confidence * 100}%` }}
+              ></div>
+            </div>
+
+            <p className="confidence-text">
+              Confidence: {(result.confidence * 100).toFixed(0)}%
+            </p>
+
+            <p className="source">Source: {result.source}</p>
           </div>
         )}
+
+        <p className="footer">
+          Built with FastAPI & React — LucidVerify © 2025
+        </p>
       </div>
     </div>
   );
