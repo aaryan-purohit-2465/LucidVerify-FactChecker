@@ -3,88 +3,69 @@ import "./App.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-function App() {
+export default function App() {
   const [text, setText] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
-  const verifyNews = async () => {
+  const verify = async () => {
     if (!text.trim()) return;
 
     setLoading(true);
-    setError("");
     setResult(null);
 
     try {
-      const response = await fetch(`${API_URL}/predict`, {
+      const res = await fetch(`${API_URL}/predict`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ text })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
       });
 
-      if (!response.ok) {
-        throw new Error("Backend not reachable");
-      }
-
-      const data = await response.json();
+      const data = await res.json();
       setResult(data);
     } catch (err) {
-      setError("Backend not reachable. Please try again later.");
-    } finally {
-      setLoading(false);
+      alert("Backend not reachable");
     }
+
+    setLoading(false);
   };
 
   return (
-    <div className="app-container">
+    <div className="app">
       <div className="card">
-        <h1>LucidVerify — Fact Checker</h1>
-        <p className="subtitle">AI-powered Fake News Detection</p>
+        <h1 className="logo">LucidVerify</h1>
+        <p className="tagline">AI-powered Fact Checker</p>
 
         <textarea
-          placeholder="Paste a news headline, tweet, or claim to verify..."
+          className="input"
+          placeholder="Paste a news headline, tweet or claim..."
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
 
-        <button onClick={verifyNews} disabled={loading}>
-          {loading ? "Verifying..." : "Verify"}
+        <button className="btn" onClick={verify} disabled={loading}>
+          {loading ? "Verifying..." : "Verify Now"}
         </button>
 
-        {error && <p className="error">{error}</p>}
-
         {result && (
-          <div className={`result ${result.label}`}>
-            <h3>Prediction Result</h3>
+          <div className="result">
+            <div className={`badge ${result.label}`}>
+              {result.label.toUpperCase()}
+            </div>
 
-            <p className="label">
-              {result.label === "real" ? "✅ REAL NEWS" : "❌ FAKE NEWS"}
-            </p>
-
-            <div className="confidence-bar">
+            <div className="progress">
               <div
-                className="confidence-fill"
+                className="fill"
                 style={{ width: `${result.confidence * 100}%` }}
               ></div>
             </div>
 
-            <p className="confidence-text">
+            <p className="confidence">
               Confidence: {(result.confidence * 100).toFixed(0)}%
             </p>
-
-            <p className="source">Source: {result.source}</p>
           </div>
         )}
-
-        <p className="footer">
-          Built with FastAPI & React — LucidVerify © 2025
-        </p>
       </div>
     </div>
   );
 }
-
-export default App;
