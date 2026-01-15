@@ -1,40 +1,45 @@
-# backend/app/model.py
+import re
 
-model = None
+def analyze_text(text: str):
+    text = text.lower()
 
-def load_model():
-    """
-    Loads or initializes the model.
-    This is a safe fallback model for now.
-    """
-    global model
-    model = "rule_based_model"
-    print("Model loaded successfully")
+    fake_keywords = [
+        "shocking", "breaking", "you won't believe", "secret", "exposed",
+        "miracle", "cure", "guaranteed", "click here", "hoax"
+    ]
 
+    real_keywords = [
+        "government", "minister", "official", "report", "study",
+        "announced", "released", "confirmed", "policy", "court"
+    ]
 
-def predict(text: str):
-    """
-    Simple rule-based prediction (temporary but stable).
-    """
-    if not text or not text.strip():
-        return {
-            "label": "unknown",
-            "confidence": 0.0,
-            "source": "rule-based"
-        }
+    fake_score = 0
+    real_score = 0
 
-    keywords = ["government", "policy", "minister", "election", "education"]
-    text_lower = text.lower()
+    for word in fake_keywords:
+        if word in text:
+            fake_score += 1
 
-    if any(word in text_lower for word in keywords):
-        return {
-            "label": "real",
-            "confidence": 0.8,
-            "source": "rule-based"
-        }
+    for word in real_keywords:
+        if word in text:
+            real_score += 1
+
+    if fake_score > real_score:
+        label = "fake"
+        confidence = min(0.6 + fake_score * 0.1, 0.95)
+        explanation = "Detected sensational or misleading language patterns."
+    elif real_score > fake_score:
+        label = "real"
+        confidence = min(0.6 + real_score * 0.1, 0.95)
+        explanation = "Detected official or factual language patterns."
+    else:
+        label = "unknown"
+        confidence = 0.5
+        explanation = "Not enough information to determine authenticity."
 
     return {
-        "label": "unknown",
-        "confidence": 0.4,
-        "source": "rule-based"
+        "label": label,
+        "confidence": round(confidence, 2),
+        "source": "AI rule-engine",
+        "explanation": explanation
     }
