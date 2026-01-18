@@ -35,11 +35,6 @@ Backend API: https://lucidverify-backend.onrender.com
 
 ---
 
-## 📸 Screenshots
-(Add screenshots here)
-
----
-
 ## 🏗 Architecture
 React Frontend → FastAPI Backend → AI Prediction Engine
 
@@ -47,4 +42,3 @@ React Frontend → FastAPI Backend → AI Prediction Engine
 
 ## 👨‍💻 Author
 Aaryan Purohit  
-Computer Science Student — SRM Institute of Science and Technology  
