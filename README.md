@@ -30,8 +30,8 @@ It analyzes news headlines and claims to classify them as **Real** or **Fake** w
 ---
 
 ## 🌐 Live Demo
-Frontend: https://your-vercel-link.vercel.app  
-Backend API: https://your-backend-url.onrender.com
+Frontend: https://lucid-verify-fact-checker.vercel.app  
+Backend API: https://lucidverify-backend.onrender.com
 
 ---
 
