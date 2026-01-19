@@ -42,7 +42,7 @@ export default function App() {
         <div className="subtitle">AI-powered Fact Checker</div>
 
         <textarea
-          placeholder="Paste a news headline, tweet or claim..."
+          placeholder="Paste a news headline, tweet or claim"
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
