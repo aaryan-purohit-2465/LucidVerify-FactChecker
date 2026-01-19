@@ -38,7 +38,7 @@ export default function App() {
       <div className="app-bg"></div>
 
       <div className="card">
-        <div className="title">LucidVerify</div>
+        <div className="title">Lucid Verify</div>
         <div className="subtitle">AI-powered Fact Checker</div>
 
         <textarea
