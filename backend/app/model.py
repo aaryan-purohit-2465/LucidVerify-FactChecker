@@ -1,45 +1,51 @@
-import re
+import joblib
+import os
+import numpy as np
 
-def analyze_text(text: str):
-    text = text.lower()
+MODEL_PATH = "backend/models/model.pkl"
+VECTORIZER_PATH = "backend/models/vectorizer.pkl"
 
-    fake_keywords = [
-        "shocking", "breaking", "you won't believe", "secret", "exposed",
-        "miracle", "cure", "guaranteed", "click here", "hoax"
-    ]
+model = None
+vectorizer = None
 
-    real_keywords = [
-        "government", "minister", "official", "report", "study",
-        "announced", "released", "confirmed", "policy", "court"
-    ]
 
-    fake_score = 0
-    real_score = 0
+def load_model():
+    global model, vectorizer
 
-    for word in fake_keywords:
-        if word in text:
-            fake_score += 1
+    if not os.path.exists(MODEL_PATH) or not os.path.exists(VECTORIZER_PATH):
+        print("❌ Model or vectorizer not found!")
+        return False
 
-    for word in real_keywords:
-        if word in text:
-            real_score += 1
+    model = joblib.load(MODEL_PATH)
+    vectorizer = joblib.load(VECTORIZER_PATH)
 
-    if fake_score > real_score:
-        label = "fake"
-        confidence = min(0.6 + fake_score * 0.1, 0.95)
-        explanation = "Detected sensational or misleading language patterns."
-    elif real_score > fake_score:
+    print("✅ ML Model Loaded Successfully")
+    return True
+
+
+def predict(text):
+    if model is None or vectorizer is None:
+        return {
+            "label": "unknown",
+            "confidence": 0.0,
+            "source": "fallback"
+        }
+
+    X = vectorizer.transform([text])
+    probs = model.predict_proba(X)[0]
+
+    fake_prob = probs[0]
+    real_prob = probs[1]
+
+    if real_prob > fake_prob:
         label = "real"
-        confidence = min(0.6 + real_score * 0.1, 0.95)
-        explanation = "Detected official or factual language patterns."
+        confidence = real_prob
     else:
-        label = "unknown"
-        confidence = 0.5
-        explanation = "Not enough information to determine authenticity."
+        label = "fake"
+        confidence = fake_prob
 
     return {
         "label": label,
-        "confidence": round(confidence, 2),
-        "source": "AI rule-engine",
-        "explanation": explanation
+        "confidence": round(float(confidence), 2),
+        "source": "ml_model"
     }

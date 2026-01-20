@@ -1,21 +1,14 @@
-from fastapi import FastAPI 
-# 
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
+from app.model import load_model, predict
 
-from backend.app.model import analyze_text
+app = FastAPI(title="LucidVerify API")
 
-app = FastAPI(
-    title="LucidVerify Backend",
-    description="AI-powered Fake News Detection API",
-    version="1.0.0"
-)
-
-# Allow frontend access (Vercel / localhost)
+# Enable CORS for frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # later you can restrict this
-    allow_credentials=True,
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -24,23 +17,17 @@ class NewsRequest(BaseModel):
     text: str
 
 
+@app.on_event("startup")
+def startup():
+    load_model()
+
+
 @app.get("/")
-def root():
-    return {"message": "LucidVerify backend is running 🚀"}
-
-
-@app.get("/health")
-def health():
-    return {"status": "ok"}
+def home():
+    return {"message": "LucidVerify API running"}
 
 
 @app.post("/predict")
-def predict(req: NewsRequest):
-    """
-    Takes news text and returns:
-    - label (real/fake/unknown)
-    - confidence
-    - source
-    - explanation
-    """
-    return analyze_text(req.text)
+def verify_news(req: NewsRequest):
+    result = predict(req.text)
+    return result
