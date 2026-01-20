@@ -8,7 +8,7 @@ It analyzes news headlines and claims to classify them as **Real** or **Fake** w
 ## 🚀 Features
 - AI-powered news verification
 - Confidence scoring
-- Explainable predictions
+- Explainable prediction
 - Modern animated UI
 - Real-time backend API
 - Fully deployed product
