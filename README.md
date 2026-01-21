@@ -41,4 +41,4 @@ React Frontend → FastAPI Backend → AI Prediction Engine
 ---
 
 ## 👨‍💻 Author
-Aaryan Purohit  
+Aaryan 
