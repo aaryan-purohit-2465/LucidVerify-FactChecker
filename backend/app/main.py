@@ -5,7 +5,6 @@ from app.model import load_model, predict
 
 app = FastAPI(title="LucidVerify API")
 
-# Enable CORS for frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -18,8 +17,13 @@ class NewsRequest(BaseModel):
 
 
 @app.on_event("startup")
-def startup():
-    load_model()
+def startup_event():
+    print("🚀 Starting LucidVerify backend...")
+    success = load_model()
+    if success:
+        print("✅ Backend ready")
+    else:
+        print("❌ Backend failed to load model")
 
 
 @app.get("/")
@@ -28,6 +32,5 @@ def home():
 
 
 @app.post("/predict")
-def verify_news(req: NewsRequest):
-    result = predict(req.text)
-    return result
+def verify(req: NewsRequest):
+    return predict(req.text)
