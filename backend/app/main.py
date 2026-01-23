@@ -1,40 +1,39 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
-from backend.app.model import load_model, predict
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
-app = FastAPI(title="LucidVerify AI Backend")
+from backend.app.model import load_model, predict
 
-# Allow frontend to access backend
+
+app = FastAPI(title="LucidVerify API")
+
+# CORS (important for frontend)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # later we can restrict to your domain
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-
-class NewsRequest(BaseModel):
+class PredictRequest(BaseModel):
     text: str
 
 
 @app.on_event("startup")
 def startup():
-    print("Starting backend...")
     load_model()
-    print("Backend ready!")
 
 
 @app.get("/")
-def home():
-    return {"message": "LucidVerify AI Backend is running"}
+def root():
+    return {"message": "LucidVerify backend running"}
 
 
 @app.post("/predict")
-def predict_news(request: NewsRequest):
+def predict_news(req: PredictRequest):
     try:
-        result = predict(request.text)
+        result = predict(req.text)
         return result
     except Exception as e:
         return {
