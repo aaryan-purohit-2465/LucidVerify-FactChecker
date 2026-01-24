@@ -1,6 +1,7 @@
 import joblib
-import numpy as np
 import os
+import re
+from typing import Tuple
 
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "super_model.joblib")
 VECTORIZER_PATH = os.path.join(os.path.dirname(__file__), "vectorizer.joblib")
@@ -9,30 +10,41 @@ model = None
 vectorizer = None
 
 
+def clean_text(text: str) -> str:
+    text = text.lower()
+    text = re.sub(r"http\S+", "", text)
+    text = re.sub(r"[^a-z\s]", "", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
+
+
 def load_model():
     global model, vectorizer
 
-    if model is None or vectorizer is None:
-        print("🔄 Loading ML model and vectorizer...")
-        model = joblib.load(MODEL_PATH)
-        vectorizer = joblib.load(VECTORIZER_PATH)
-        print("✅ Model loaded successfully")
+    print("🔄 Loading ML model and vectorizer...")
+
+    model = joblib.load(MODEL_PATH)
+    vectorizer = joblib.load(VECTORIZER_PATH)
+
+    print("✅ Model loaded successfully")
 
 
-def predict(text: str):
-    if not model or not vectorizer:
-        raise RuntimeError("Model not loaded")
+def predict(text: str) -> Tuple[str, float, str]:
+    try:
+        if model is None or vectorizer is None:
+            return "error", 0.0, "model_not_loaded"
 
-    text_vec = vectorizer.transform([text])
-    probs = model.predict_proba(text_vec)[0]
+        cleaned = clean_text(text)
 
-    label_index = np.argmax(probs)
-    confidence = float(probs[label_index])
+        # Vectorize ONLY after cleaning
+        vectorized = vectorizer.transform([cleaned])
 
-    label = "Real" if label_index == 1 else "Fake"
+        prediction = model.predict(vectorized)[0]
+        confidence = max(model.predict_proba(vectorized)[0])
 
-    return {
-        "label": label,
-        "confidence": round(confidence, 3),
-        "source": "ml_super_model"
-    }
+        label = "Real" if prediction == 1 else "Fake"
+
+        return label, round(float(confidence), 3), "ml_model"
+
+    except Exception as e:
+        return "error", 0.0, str(e)
