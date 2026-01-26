@@ -7,8 +7,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const API_URL = "https://lucidverify-backend.onrender.com/predict"; 
-  // Replace with your real backend URL if different
+  const API_URL = "https://lucidverify-backend.onrender.com/predict";
 
   const verifyClaim = async () => {
     if (!text.trim()) return;
