@@ -1,46 +1,65 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from backend.app.model import load_model, predict
+import joblib
+import os
+
+# -------------------------
+# App Setup
+# -------------------------
 
 app = FastAPI()
 
-# ---------------------------
-# Request Body Schema
-# ---------------------------
+# Allow all origins (for dev + prod)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# -------------------------
+# Load Model & Vectorizer
+# -------------------------
+
+MODEL_PATH = "backend/app/model.joblib"
+VECTORIZER_PATH = "backend/app/vectorizer.joblib"
+
+print("🔄 Loading ML model and vectorizer...")
+
+model = joblib.load(MODEL_PATH)
+vectorizer = joblib.load(VECTORIZER_PATH)
+
+print("✅ Model loaded successfully")
+
+# -------------------------
+# Request Schema
+# -------------------------
+
 class NewsRequest(BaseModel):
     text: str
 
+# -------------------------
+# Routes
+# -------------------------
 
-# ---------------------------
-# Startup: Load ML Model
-# ---------------------------
-@app.on_event("startup")
-def startup_event():
-    print("🔄 Loading ML pipeline model...")
-    load_model()
-    print("✅ Model loaded successfully")
-
-
-# ---------------------------
-# Health Check
-# ---------------------------
 @app.get("/")
 def root():
-    return {"status": "LucidVerify Backend Running"}
+    return {"message": "LucidVerify API is running"}
 
-
-# ---------------------------
-# Prediction Endpoint
-# ---------------------------
 @app.post("/predict")
 def predict_news(req: NewsRequest):
-    try:
-        result = predict(req.text)
-        return result
-    except Exception as e:
-        return {
-            "label": "error",
-            "confidence": 0.0,
-            "source": "server_error",
-            "message": str(e)
-        }
+    text = req.text
+
+    X = vectorizer.transform([text])
+    pred = model.predict(X)[0]
+    prob = model.predict_proba(X).max()
+
+    label = "real" if pred == 1 else "fake"
+
+    return {
+        "label": label,
+        "confidence": round(float(prob), 3),
+        "source": "ml_model"
+    }
